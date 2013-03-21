@@ -22,7 +22,7 @@ class TestFields(unittest.TestCase, BaseTest):
         self.portal = self.layer['portal']
 
     def _getTargetClass(self):
-        from collective.dms.basecontent._field import LocalRolesToPrincipals
+        from collective.z3cform.rolefield.field import LocalRolesToPrincipals
         return LocalRolesToPrincipals
 
     def _makeOne(self, *args, **kw):
