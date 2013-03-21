@@ -1,11 +1,15 @@
-# Build and Release Folders
-bin/
-bin-debug/
-bin-release/
-
-# Other files and folders
+*.egg-info
+*.mo
+*.pyc
+.installed.cfg
+.mr.developer.cfg
+.project
+.pydevproject
 .settings/
-
-# Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
-# should NOT be excluded as they contain compiler settings and other important
-# information for Eclipse / Flash Builder.
+bin/
+develop-eggs/
+parts/
+src/*
+!src/collective/
+var/
+buildout-cache/
