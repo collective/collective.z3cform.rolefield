@@ -12,13 +12,13 @@ from collective.z3cform.rolefield.testing import ROLEFIELD_PROFILE_FUNCTIONAL
 from collective.z3cform.rolefield.field import LocalRolesToPrincipalsDataManager
 
 
-class TestFields(unittest.TestCase, BaseTest):
+class TestRoleField(unittest.TestCase, BaseTest):
     """Tests adapters"""
 
     layer = ROLEFIELD_PROFILE_FUNCTIONAL
 
     def setUp(self):
-        super(TestFields, self).setUp()
+        super(TestRoleField, self).setUp()
         self.portal = self.layer['portal']
 
     def _getTargetClass(self):

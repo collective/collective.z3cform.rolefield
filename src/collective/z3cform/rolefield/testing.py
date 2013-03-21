@@ -17,7 +17,7 @@ ROLEFIELD = PloneWithPackageLayer(
     zcml_package=collective.z3cform.rolefield,
     additional_z2_products=(),
     gs_profile_id='collective.z3cform.rolefield:testing',
-    name="WS4ROLEFIELD")
+    name="ROLEFIELD")
 
 ROLEFIELD_PROFILE_FUNCTIONAL = FunctionalTesting(
     bases=(ROLEFIELD,), name="ROLEFIELD_PROFILE_FUNCTIONAL")
