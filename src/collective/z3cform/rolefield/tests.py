@@ -81,3 +81,6 @@ class TestRoleField(unittest.TestCase, BaseTest):
         datamanager.set(())
         # not managed local_roles are kepts
         self.assertEquals(tuple(testingobj.__ac_local_roles__['Reviewers']), ('Reader',))
+        # add a not existing principal value, test that it is not set
+        datamanager.set(('toto',))
+        self.failIf('toto' in testingobj.__ac_local_roles__.keys())

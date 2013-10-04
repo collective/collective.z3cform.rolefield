@@ -61,6 +61,7 @@ class LocalRolesToPrincipalsDataManager(AttributeField):
         """See z3c.form.interfaces.IDataManager"""
         # set local roles before setting the value so we still have access to the old value
         roles_to_assign = self.field.roles_to_assign
+        principal_ids = self.context.acl_users.getUserIds() + self.context.acl_users.getGroupIds()
         # ---1 --- first find assigned roles to remove
         # it is not that easy to remove local roles because no helper method exists for removing
         # some specific local roles, only a method for removing every local roles for a list of principals...
@@ -89,6 +90,8 @@ class LocalRolesToPrincipalsDataManager(AttributeField):
         # ---2 --- now add new local roles
         added_principals = set(value).difference(set(old_value))
         for added_principal in added_principals:
+            if not added_principal in principal_ids:
+                continue
             self.context.manage_addLocalRoles(added_principal, roles_to_assign)
         # finally set the value
         super(LocalRolesToPrincipalsDataManager, self).set(value)
