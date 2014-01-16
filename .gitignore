@@ -13,3 +13,6 @@ src/*
 !src/collective/
 var/
 buildout-cache/
+include/
+lib/
+local/
