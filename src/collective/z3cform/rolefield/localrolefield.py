@@ -3,27 +3,15 @@ from zope.component import adapts
 from zope.interface import implementer
 from zope.interface import Interface
 
-from zope.schema.interfaces import IList
-from zope.schema import List, Tuple
+from zope.schema import List
 from zope.interface import Invalid
 
 from z3c.form.datamanager import AttributeField
 
+from .interfaces import ILocalRolesToPrincipals
+
 import logging
 logger = logging.getLogger('collective.z3cform.rolefield')
-
-
-class ILocalRolesToPrincipals(IList):
-    """Field that list principals depending on a vocabulary (by default list every available groups)
-       and that assign local roles defined in the roles_to_assign attribute."""
-
-    # this attribute will contains a tuple of principal to assign when the value is set
-    roles_to_assign = Tuple(
-        title=u"Roles to assign",
-        description=u"""\
-        Roles that will be automatically assigned as local roles to selected principals.
-        """,
-        required=True)
 
 
 @implementer(ILocalRolesToPrincipals)
