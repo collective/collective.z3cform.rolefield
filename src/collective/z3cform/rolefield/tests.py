@@ -9,7 +9,7 @@ from plone.app.testing.helpers import setRoles
 from ecreall.helpers.testing.base import BaseTest
 
 from collective.z3cform.rolefield.testing import ROLEFIELD_PROFILE_FUNCTIONAL
-from collective.z3cform.rolefield.field import LocalRolesToPrincipalsDataManager
+from collective.z3cform.rolefield.localrolefield import LocalRolesToPrincipalsDataManager
 
 
 class TestRoleField(unittest.TestCase, BaseTest):
@@ -22,7 +22,7 @@ class TestRoleField(unittest.TestCase, BaseTest):
         self.portal = self.layer['portal']
 
     def _getTargetClass(self):
-        from collective.z3cform.rolefield.field import LocalRolesToPrincipals
+        from collective.z3cform.rolefield.localrolefield import LocalRolesToPrincipals
         return LocalRolesToPrincipals
 
     def _makeOne(self, *args, **kw):

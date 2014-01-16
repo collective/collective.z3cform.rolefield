@@ -7,12 +7,12 @@
   <include package="plone.z3cform" />
 
   <utility
-    component=".field.LocalRolesToPrincipalsHandler"
+    component=".localrolefield.LocalRolesToPrincipalsHandler"
     name="collective.z3cform.rolefield.LocalRolesToPrincipals"
     />
 
   <adapter
-    factory=".field.LocalRolesToPrincipalsDataManager"
+    factory=".localrolefield.LocalRolesToPrincipalsDataManager"
     />
 
 </configure>
