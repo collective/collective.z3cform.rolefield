@@ -37,50 +37,50 @@ class TestRoleField(unittest.TestCase, BaseTest):
         self.assertEquals(field.roles_to_assign, ())
         self.assertRaises(Invalid, field.validate, [])
         # if we want to assign role but one does not exist, validate fails too
-        field = self._makeOne(roles_to_assign=('Editor', 'WrongRole',))
+        field = self._makeOne(roles_to_assign=('Editor', 'WrongRole'))
         self.assertRaises(Invalid, field.validate, [])
         # if we have valid values, it works like a charm ;-)
-        field = self._makeOne(roles_to_assign=('Editor', 'Reader',))
+        field = self._makeOne(roles_to_assign=('Editor', 'Reader'))
         field.validate([])
 
     def test_datamanager(self):
         """Test the local_roles assignment mechanism managed by the datamanager."""
         testingfield = self.portal.portal_types.testingtype.lookupSchema()['testingField']
-        testingfield.roles_to_assign = ('Editor', 'Contributor',)
+        testingfield.roles_to_assign = ('Editor', 'Contributor')
         # first create a sample object
         # make the default user a Manager
         member = self.portal.portal_membership.getAuthenticatedMember()
-        setRoles(self.portal, member.getId(), ('Manager',))
+        setRoles(self.portal, member.getId(), ('Manager', ))
         # create an object
         self.portal.invokeFactory('testingtype', id='testingobj')
         testingobj = getattr(self.portal, 'testingobj')
         datamanager = LocalRolesToPrincipalsDataManager(testingobj, testingfield)
         self.failIf('Administrators' in testingobj.__ac_local_roles__.keys())
-        datamanager.set(('Administrators',))
+        datamanager.set(('Administrators', ))
         # now we have local_roles for 'Administrators'
         self.failUnless('Administrators' in testingobj.__ac_local_roles__.keys())
-        # moreover, local_roles for 'Administrators' are ('Editor', 'Contributor',)
+        # moreover, local_roles for 'Administrators' are ('Editor', 'Contributor')
         self.assertEquals(tuple(testingobj.__ac_local_roles__['Administrators']), testingfield.roles_to_assign)
         # add a principal, test that local_roles are adapted
         self.failIf('Reviewers' in testingobj.__ac_local_roles__.keys())
-        # the value is now ('Administrators', 'Reviewers',)
-        datamanager.set(('Administrators', 'Reviewers',))
+        # the value is now ('Administrators', 'Reviewers')
+        datamanager.set(('Administrators', 'Reviewers'))
         self.failUnless('Reviewers' in testingobj.__ac_local_roles__.keys())
         self.assertEquals(tuple(testingobj.__ac_local_roles__['Reviewers']), testingfield.roles_to_assign)
         # remove a group, check managed roles
         # removing a group is made by passing new value where an existing group is no more present
         self.failUnless('Administrators' in testingobj.__ac_local_roles__.keys())
-        datamanager.set(('Reviewers',))
+        datamanager.set(('Reviewers', ))
         self.failIf('Administrators' in testingobj.__ac_local_roles__.keys())
         # if an external manipulation added a local_role not managed by the field, it is kept
         # add a local_role for 'Reviewers' not managed by our field
         self.assertEquals(tuple(testingobj.__ac_local_roles__['Reviewers']), testingfield.roles_to_assign)
-        testingobj.manage_addLocalRoles('Reviewers', ('Reader',))
-        self.assertEquals(tuple(testingobj.__ac_local_roles__['Reviewers']), testingfield.roles_to_assign + ('Reader',))
+        testingobj.manage_addLocalRoles('Reviewers', ('Reader', ))
+        self.assertEquals(tuple(testingobj.__ac_local_roles__['Reviewers']), testingfield.roles_to_assign + ('Reader', ))
         # remove the 'Reviewers' local_roles
         datamanager.set(())
         # not managed local_roles are kepts
-        self.assertEquals(tuple(testingobj.__ac_local_roles__['Reviewers']), ('Reader',))
+        self.assertEquals(tuple(testingobj.__ac_local_roles__['Reviewers']), ('Reader', ))
         # add a not existing principal value, test that it is not set
-        datamanager.set(('toto',))
+        datamanager.set(('toto', ))
         self.failIf('toto' in testingobj.__ac_local_roles__.keys())

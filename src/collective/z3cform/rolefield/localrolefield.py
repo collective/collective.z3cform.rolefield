@@ -74,7 +74,7 @@ class LocalRolesToPrincipalsDataManager(AttributeField):
                     self.context.manage_setLocalRoles(principal, cleaned_local_roles)
                 else:
                     # either use manage_delLocalRoles
-                    self.context.manage_delLocalRoles((principal,))
+                    self.context.manage_delLocalRoles((principal, ))
         # ---2 --- now add new local roles
         added_principals = set(value).difference(set(old_value))
         for added_principal in added_principals:
