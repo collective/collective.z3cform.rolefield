@@ -15,4 +15,10 @@
     factory=".localrolefield.LocalRolesToPrincipalsDataManager"
     />
 
+  <subscriber
+    for="*
+         .interfaces.ILocalRolesToPrincipals
+         zope.schema.interfaces.IFieldUpdatedEvent"
+    handler=".localrolefield.set_local_role_on_object" />
+
 </configure>
