@@ -11,8 +11,9 @@
     name="collective.z3cform.rolefield.LocalRolesToPrincipals"
     />
 
-  <adapter
-    factory=".localrolefield.LocalRolesToPrincipalsDataManager"
+  <utility
+    component=".statefulllocalrolesfield.StatefullLocalRolesFieldHandler"
+    name="collective.z3cform.rolefield.StatefullLocalRolesField"
     />
 
   <subscriber

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from zope.schema.interfaces import IList
-from zope.schema import Tuple
+from zope.schema import Tuple, TextLine
+
+from .statemapping import StateMapping
 
 
 class ILocalRolesToPrincipals(IList):
@@ -14,3 +16,10 @@ class ILocalRolesToPrincipals(IList):
         Roles that will be automatically assigned as local roles to selected principals.
         """,
         required=True)
+
+
+class IStatefullLocalRolesField(IList):
+
+    state_config = StateMapping(title=u"Local role configuration per state",
+                                key_type=TextLine(),
+                                required=True)
