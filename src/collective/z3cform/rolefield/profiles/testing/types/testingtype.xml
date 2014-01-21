@@ -21,23 +21,12 @@
  </property>
  <property name="default_view_fallback">False</property>
  <property name="add_permission">cmf.AddPortalContent</property>
- <property name="klass">plone.dexterity.content.Container</property>
+ <property name="klass">collective.z3cform.rolefield.tests.container.TestContainer</property>
  <property name="behaviors">
   <element value="plone.app.content.interfaces.INameFromTitle"/>
   <element value="plone.app.dexterity.behaviors.metadata.IBasic"/>
  </property>
- <property name="schema" />
- <property name="model_source">
-&lt;model xmlns="http://namespaces.plone.org/supermodel/schema"&gt;
-    &lt;schema&gt;
-        &lt;field name="testingField" type="collective.z3cform.rolefield.LocalRolesToPrincipals"&gt;
-            &lt;title&gt;testingField&lt;/title&gt;
-            &lt;required&gt;False&lt;/required&gt;
-            &lt;roles_to_assign&gt;('Reader',)&lt;/roles_to_assign&gt;
-        &lt;/field&gt;
-    &lt;/schema&gt;
-&lt;/model&gt;
- </property>
+ <property name="schema">collective.z3cform.rolefield.tests.container.ITestContainer</property>
  <alias from="(Default)" to="(dynamic view)"/>
  <alias from="edit" to="@@edit"/>
  <alias from="sharing" to="@@sharing"/>
