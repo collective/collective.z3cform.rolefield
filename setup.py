@@ -49,6 +49,7 @@ setup(
             'ecreall.helpers.testing',
             'plone.app.testing',
             'plone.app.dexterity',
+            'zope.schemaevent'
         ],
     },
     entry_points="""
