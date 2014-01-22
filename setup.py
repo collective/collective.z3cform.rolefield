@@ -43,13 +43,13 @@ setup(
     zip_safe=False,
     install_requires=[
         'setuptools',
+        'zope.schemaevent'
     ],
     extras_require={
         'test': [
             'ecreall.helpers.testing',
             'plone.app.testing',
             'plone.app.dexterity',
-            'zope.schemaevent'
         ],
     },
     entry_points="""
