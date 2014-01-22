@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
+from zope.component import adapts
 from zope.component.hooks import getSite
 from zope.interface import implementer
+from zope.interface import Interface
 
 from zope.schema import List, NO_VALUE
 from zope.schema.fieldproperty import FieldPropertyStoredThroughField
 from zope.interface import Invalid
+from z3c.form.datamanager import AttributeField
 
 from Products.CMFCore.utils import getToolByName
 
@@ -136,7 +139,7 @@ class LocalRolesToPrincipalsDataManager(AttributeField):
                 continue
             self.context.manage_addLocalRoles(added_principal, roles_to_assign)
         # finally set the value
-        super(LocalRolesToPrincipalsDataManager, self).set(value)   add_local_roles_to_principals(context, added_principals, roles_to_assign)
+        super(LocalRolesToPrincipalsDataManager, self).set(value)
 
 import plone.supermodel.exportimport
 
