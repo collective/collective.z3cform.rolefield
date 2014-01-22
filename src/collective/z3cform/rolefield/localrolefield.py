@@ -92,7 +92,8 @@ def set_local_role_on_object(context, field, event):
                                            roles_to_assign)
     # ---2 --- now add new local roles
     added_principals = set(new_value).difference(set(old_value))
-    add_local_roles_to_principals(context, added_principals, roles_to_assign)
+    if added_principals:
+        add_local_roles_to_principals(context, added_principals, roles_to_assign)
 
 import plone.supermodel.exportimport
 
