@@ -6,7 +6,7 @@ from plone.app.testing import login, TEST_USER_NAME, setRoles, TEST_USER_ID
 from ..statefulllocalrolesfield import StatefullLocalRolesField
 from ..interfaces import IStatefullLocalRolesField
 from ..testing import ROLEFIELD_PROFILE_FUNCTIONAL
-from ..utils import get_field_from_schema
+from ..utils import get_field_from_schema, get_suffixed_principals
 
 
 class TestGetFieldFromSchema(unittest.TestCase):
@@ -26,3 +26,8 @@ class TestGetFieldFromSchema(unittest.TestCase):
         self.assertEqual(len(fields), 1)
         field = fields[0]
         self.assertTrue(isinstance(field, StatefullLocalRolesField))
+
+    def test_get_suffixed_principals(self):
+        admins = list(get_suffixed_principals(['Site'], 'Administrators'))
+        self.assertEqual(len(admins), 1)
+        self.assertEqual(admins[0], 'Site Administrators')
