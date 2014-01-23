@@ -5,9 +5,12 @@ from zope import component
 from zope import schema
 
 from .container import ITestContainer
+from Products.CMFCore.utils import getToolByName
+from Products.DCWorkflow.interfaces import IAfterTransitionEvent
 
 from plone.app.testing import login, TEST_USER_NAME, setRoles, TEST_USER_ID
-from ..statefulllocalrolesfield import StatefullLocalRolesField
+from ..statefulllocalrolesfield import (StatefullLocalRolesField,
+                                        update_local_roles_based_on_fields)
 from ..interfaces import IStatefullLocalRolesField
 from ..testing import ROLEFIELD_PROFILE_FUNCTIONAL
 from ecreall.helpers.testing.base import BaseTest
@@ -54,5 +57,25 @@ class TestStatefullLocalRolesToPrincipals(unittest.TestCase, BaseTest):
         event, obj, field = logs[0]
         self.assertEqual(obj, item)
         self.assertTrue(isinstance(field, StatefullLocalRolesField))
-        self.assertEqual(event.old_value, schema.NO_VALUE)
+        self.assertEqual(event.old_value, None)
         self.assertEqual(event.new_value, ['foo'])
+
+    def test_localroles_change_on_statechange(self):
+        component.provideHandler(update_local_roles_based_on_fields,
+                                 adapts=(ITestContainer, IAfterTransitionEvent))
+        self.portal.invokeFactory('testingtype', 'test',
+                                  stateLocalField=['Administrators'])
+        item = getattr(self.portal, 'test')
+        self.assertEqual(dict(item.get_local_roles()),
+                         {'test_user_1_': ('Owner', ),
+                          'Site Administrators': ('Editor',)})
+        workflow = getToolByName(self.portal, 'portal_workflow')
+        item.stateLocalField = ['Administrators']
+        workflow.doActionFor(item, 'publish')
+        self.assertEqual(dict(item.get_local_roles()),
+                         {'test_user_1_': ('Owner', ),
+                          'Site Administrators': ('Owner', )})
+        workflow.doActionFor(item, 'retract')
+        self.assertEqual(dict(item.get_local_roles()),
+                         {'test_user_1_': ('Owner', ),
+                          'Site Administrators': ('Editor', )})
