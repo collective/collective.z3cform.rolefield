@@ -11,10 +11,10 @@ from plone.app.testing import login, TEST_USER_NAME, setRoles, TEST_USER_ID
 from ecreall.helpers.testing.base import BaseTest
 
 from .container import ITestContainer
-from collective.z3cform.rolefield.testing import ROLEFIELD_PROFILE_FUNCTIONAL
-from collective.z3cform.rolefield.localrolefield import (LocalRolesToPrincipals,
-                                                         remove_local_roles_from_principals,
-                                                         add_local_roles_to_principals)
+from ..testing import ROLEFIELD_PROFILE_FUNCTIONAL
+from ..localrolefield import (LocalRolesToPrincipals,
+                              remove_local_roles_from_principals,
+                              add_local_roles_to_principals)
 from ..interfaces import ILocalRolesToPrincipals
 
 
@@ -38,7 +38,8 @@ class TestRoleField(unittest.TestCase, BaseTest):
         return field.bind(self.portal)
 
     def test_roles_to_assign_attribute(self):
-        """If the field is not correctly configured, it fails upon validation."""
+        """If the field is not correctly configured,
+           it fails upon validation."""
         field = self._makeOne()
         # the roles_to_assign attribute is required, if empty, validate fails
         self.assertEquals(field.roles_to_assign, ())
@@ -75,8 +76,8 @@ class TestRoleField(unittest.TestCase, BaseTest):
         self.portal.invokeFactory('testingtype', 'test')
         item = getattr(self.portal, 'test')
         local_roles = dict(item.get_local_roles())
-        self.assertEqual(local_roles, {TEST_USER_ID: ('Owner',)})
-        remove_local_roles_from_principals(item, [TEST_USER_ID], ('Owner',))
+        self.assertEqual(local_roles, {TEST_USER_ID: ('Owner', )})
+        remove_local_roles_from_principals(item, [TEST_USER_ID], ('Owner', ))
         local_roles = dict(item.get_local_roles())
         self.assertEqual(local_roles, {})
 
@@ -84,8 +85,8 @@ class TestRoleField(unittest.TestCase, BaseTest):
         self.portal.invokeFactory('testingtype', 'test')
         item = getattr(self.portal, 'test')
         local_roles = dict(item.get_local_roles())
-        self.assertEqual(local_roles, {TEST_USER_ID: ('Owner',)})
-        add_local_roles_to_principals(item, [TEST_USER_ID], ('Editor',))
+        self.assertEqual(local_roles, {TEST_USER_ID: ('Owner', )})
+        add_local_roles_to_principals(item, [TEST_USER_ID], ('Editor', ))
         local_roles = dict(item.get_local_roles())
         self.assertEqual(local_roles, {TEST_USER_ID: ('Owner', 'Editor')})
 
@@ -93,8 +94,8 @@ class TestRoleField(unittest.TestCase, BaseTest):
         self.portal.invokeFactory('testingtype', 'test')
         item = getattr(self.portal, 'test')
         local_roles = dict(item.get_local_roles())
-        self.assertEqual(local_roles, {TEST_USER_ID: ('Owner',)})
-        add_local_roles_to_principals(item, [TEST_USER_ID], ('Coach',))
+        self.assertEqual(local_roles, {TEST_USER_ID: ('Owner', )})
+        add_local_roles_to_principals(item, [TEST_USER_ID], ('Coach', ))
         local_roles = dict(item.get_local_roles())
         self.assertEqual(local_roles, {TEST_USER_ID: ('Owner', 'Coach')})
 
@@ -102,44 +103,44 @@ class TestRoleField(unittest.TestCase, BaseTest):
         self.portal.invokeFactory('testingtype', 'test')
         item = getattr(self.portal, 'test')
         local_roles = dict(item.get_local_roles())
-        self.assertEqual(local_roles, {TEST_USER_ID: ('Owner',)})
-        add_local_roles_to_principals(item, ['John'], ('Editor',))
+        self.assertEqual(local_roles, {TEST_USER_ID: ('Owner', )})
+        add_local_roles_to_principals(item, ['John'], ('Editor', ))
         local_roles = dict(item.get_local_roles())
-        self.assertEqual(local_roles, {TEST_USER_ID: ('Owner',)})
+        self.assertEqual(local_roles, {TEST_USER_ID: ('Owner', )})
 
     def test_removed_roles(self):
         self.portal.invokeFactory('testingtype', id='testingobj')
         item = getattr(self.portal, 'testingobj')
         self.assertEqual(dict(item.get_local_roles()),
-                         {'test_user_1_': ('Owner',)})
+                         {'test_user_1_': ('Owner', )})
         item.testingField = ['Administrators', 'Reviewers']
         self.assertEqual(dict(item.get_local_roles()),
                          {'Administrators': ('Reader', 'Owner'),
                           'Reviewers': ('Reader', 'Owner'),
-                          'test_user_1_': ('Owner',)})
+                          'test_user_1_': ('Owner', )})
         item.testingField = ['Administrators']
         self.assertEqual(dict(item.get_local_roles()),
                          {'Administrators': ('Reader', 'Owner'),
-                          'test_user_1_': ('Owner',)})
+                          'test_user_1_': ('Owner', )})
 
     def test_removed_roles_with_localrole_modification(self):
         self.portal.invokeFactory('testingtype', id='testingobj')
         item = getattr(self.portal, 'testingobj')
         self.assertEqual(dict(item.get_local_roles()),
-                         {'test_user_1_': ('Owner',)})
+                         {'test_user_1_': ('Owner', )})
         item.testingField = ['Administrators', 'Reviewers']
         self.assertEqual(dict(item.get_local_roles()),
                          {'Administrators': ('Reader', 'Owner'),
                           'Reviewers': ('Reader', 'Owner'),
-                          'test_user_1_': ('Owner',)})
+                          'test_user_1_': ('Owner', )})
         item.manage_delLocalRoles(('Administrators', ))
         self.assertEqual(dict(item.get_local_roles()),
                          {'Reviewers': ('Reader', 'Owner'),
-                          'test_user_1_': ('Owner',)})
+                          'test_user_1_': ('Owner', )})
         item.testingField = ['Administrators']
         self.assertEqual(dict(item.get_local_roles()),
                          {'Administrators': ('Reader', 'Owner'),
-                          'test_user_1_': ('Owner',)})
+                          'test_user_1_': ('Owner', )})
 
     def test_local_roles_assignation(self):
         """Test the local_roles assignment mechanism managed by the datamanager."""
