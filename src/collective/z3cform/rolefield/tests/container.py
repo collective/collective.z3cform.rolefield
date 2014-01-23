@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
 from zope import interface
-from zope.schema.fieldproperty import FieldPropertyStoredThroughField
+from zope.schema.fieldproperty import FieldProperty
 
 from plone.dexterity.content import Container
 from plone.supermodel import model
 
 from ..localrolefield import LocalRolesToPrincipals
 from ..statefulllocalrolesfield import StatefullLocalRolesField
+
+
+statefull_config = {u'private': {'Site': ('Editor', )},
+                    u'published': {'Site': ('Owner', )}}
 
 
 class ITestContainer(model.Schema):
@@ -17,14 +21,12 @@ class ITestContainer(model.Schema):
 
     stateLocalField = StatefullLocalRolesField(title=u'stateLocalField',
                                                required=False,
-                                               state_config={u'private':
-                                                             {u'groups':
-                                                              {'suffix1': 'Reader', 'suffix2': 'Editor'}}})
+                                               state_config=statefull_config)
 
 
 class TestContainer(Container):
     interface.implements(ITestContainer)
 
-    stateLocalField = FieldPropertyStoredThroughField(ITestContainer[u'stateLocalField'])
+    stateLocalField = FieldProperty(ITestContainer[u'stateLocalField'])
 
-    testingField = FieldPropertyStoredThroughField(ITestContainer[u'testingField'])
+    testingField = FieldProperty(ITestContainer[u'testingField'])
