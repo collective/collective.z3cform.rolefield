@@ -12,9 +12,10 @@ from ecreall.helpers.testing.base import BaseTest
 
 from .container import ITestContainer
 from ..testing import ROLEFIELD_PROFILE_FUNCTIONAL
-from ..localrolefield import (LocalRolesToPrincipals,
-                              remove_local_roles_from_principals,
-                              add_local_roles_to_principals)
+from ..localrolefield import LocalRolesToPrincipals
+from ..utils import (remove_local_roles_from_principals,
+                     add_local_roles_to_principals)
+
 from ..interfaces import ILocalRolesToPrincipals
 
 
@@ -69,7 +70,7 @@ class TestRoleField(unittest.TestCase, BaseTest):
         event, obj, field = logs[0]
         self.assertEqual(obj, item)
         self.assertTrue(isinstance(field, LocalRolesToPrincipals))
-        self.assertEqual(event.old_value, schema.NO_VALUE)
+        self.assertEqual(event.old_value, None)
         self.assertEqual(event.new_value, ['foo'])
 
     def test_remove_local_roles_from_principals(self):
