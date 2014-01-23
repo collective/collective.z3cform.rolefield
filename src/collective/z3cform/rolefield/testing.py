@@ -20,4 +20,4 @@ ROLEFIELD = PloneWithPackageLayer(
     name="ROLEFIELD")
 
 ROLEFIELD_PROFILE_FUNCTIONAL = FunctionalTesting(
-    bases=(ROLEFIELD,), name="ROLEFIELD_PROFILE_FUNCTIONAL")
+    bases=(ROLEFIELD, ), name="ROLEFIELD_PROFILE_FUNCTIONAL")
