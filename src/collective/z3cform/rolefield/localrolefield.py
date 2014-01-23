@@ -76,24 +76,14 @@ def add_local_roles_to_principals(context, principals, roles):
 
 def set_local_role_on_object(context, field, event):
     roles_to_assign = field.roles_to_assign
-    # ---1 --- first find assigned roles to remove
-    # it is not that easy to remove local roles because no helper method exists for removing
-    # some specific local roles, only a method for removing every local roles for a list of principals...
     new_value = event.new_value
     old_value = event.old_value
     if old_value is NO_VALUE or old_value is None:
         old_value = []
-    # now check between old_value and value (new value) what is missing
-    removed_principals = set(old_value).difference(set(new_value))
-    # remove local_roles for removed_principals
-    if removed_principals:
-        remove_local_roles_from_principals(context,
-                                           removed_principals,
-                                           roles_to_assign)
-    # ---2 --- now add new local roles
-    added_principals = set(new_value).difference(set(old_value))
-    if added_principals:
-        add_local_roles_to_principals(context, added_principals, roles_to_assign)
+    remove_local_roles_from_principals(context,
+                                       old_value,
+                                       roles_to_assign)
+    add_local_roles_to_principals(context, new_value, roles_to_assign)
 
 
 import plone.supermodel.exportimport

@@ -107,6 +107,40 @@ class TestRoleField(unittest.TestCase, BaseTest):
         local_roles = dict(item.get_local_roles())
         self.assertEqual(local_roles, {TEST_USER_ID: ('Owner',)})
 
+    def test_removed_roles(self):
+        self.portal.invokeFactory('testingtype', id='testingobj')
+        item = getattr(self.portal, 'testingobj')
+        self.assertEqual(dict(item.get_local_roles()),
+                         {'test_user_1_': ('Owner',)})
+        item.testingField = ['Administrators', 'Reviewers']
+        self.assertEqual(dict(item.get_local_roles()),
+                         {'Administrators': ('Reader', 'Owner'),
+                          'Reviewers': ('Reader', 'Owner'),
+                          'test_user_1_': ('Owner',)})
+        item.testingField = ['Administrators']
+        self.assertEqual(dict(item.get_local_roles()),
+                         {'Administrators': ('Reader', 'Owner'),
+                          'test_user_1_': ('Owner',)})
+
+    def test_removed_roles_with_localrole_modification(self):
+        self.portal.invokeFactory('testingtype', id='testingobj')
+        item = getattr(self.portal, 'testingobj')
+        self.assertEqual(dict(item.get_local_roles()),
+                         {'test_user_1_': ('Owner',)})
+        item.testingField = ['Administrators', 'Reviewers']
+        self.assertEqual(dict(item.get_local_roles()),
+                         {'Administrators': ('Reader', 'Owner'),
+                          'Reviewers': ('Reader', 'Owner'),
+                          'test_user_1_': ('Owner',)})
+        item.manage_delLocalRoles(('Administrators', ))
+        self.assertEqual(dict(item.get_local_roles()),
+                         {'Reviewers': ('Reader', 'Owner'),
+                          'test_user_1_': ('Owner',)})
+        item.testingField = ['Administrators']
+        self.assertEqual(dict(item.get_local_roles()),
+                         {'Administrators': ('Reader', 'Owner'),
+                          'test_user_1_': ('Owner',)})
+
     def test_local_roles_assignation(self):
         """Test the local_roles assignment mechanism managed by the datamanager."""
         testingfield = self.portal.portal_types.testingtype.lookupSchema()['testingField']
