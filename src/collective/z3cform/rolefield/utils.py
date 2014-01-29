@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from zope.component.hooks import getSite
 from zope.component import getUtility
-from zope.schema import NO_VALUE
+from zope import schema
 
 from Products.CMFCore.utils import getToolByName
 from plone.dexterity.interfaces import IDexterityFTI
@@ -13,9 +13,9 @@ def get_field_from_schema(item, fieldInterface):
     """
     get all fields providing `fieldInterface` in a dexterity object `item`
     """
-    item_schema = getUtility(IDexterityFTI,
-                             name=item.portal_type).lookupSchema()
-    for name, field in item_schema.namesAndDescriptions():
+    fti = getUtility(IDexterityFTI, name=item.portal_type)
+    all_fields = schema.getFieldsInOrder(fti.lookupSchema())
+    for (name, field) in all_fields:
         if fieldInterface.providedBy(field):
             yield field
 
@@ -31,7 +31,7 @@ def get_suffixed_principals(base_principal_names, suffix):
 
 
 def reset_local_role_on_object(context, roles_to_assign, old_value, new_value):
-    if old_value is not NO_VALUE and old_value is not None:
+    if old_value is not schema.NO_VALUE and old_value is not None:
         remove_local_roles_from_principals(context,
                                            old_value,
                                            roles_to_assign)
