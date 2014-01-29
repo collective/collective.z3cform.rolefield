@@ -10,7 +10,7 @@ from Products.DCWorkflow.interfaces import IAfterTransitionEvent
 
 from plone.app.testing import login, TEST_USER_NAME, setRoles, TEST_USER_ID
 from ..statefulllocalrolesfield import (StatefullLocalRolesField,
-                                        update_local_roles_based_on_fields)
+                                        update_local_roles_based_on_fields_after_transition)
 from ..interfaces import IStatefullLocalRolesField
 from ..testing import ROLEFIELD_PROFILE_FUNCTIONAL
 from ecreall.helpers.testing.base import BaseTest
@@ -61,7 +61,7 @@ class TestStatefullLocalRolesToPrincipals(unittest.TestCase, BaseTest):
         self.assertEqual(event.new_value, ['foo'])
 
     def test_localroles_change_on_statechange(self):
-        component.provideHandler(update_local_roles_based_on_fields,
+        component.provideHandler(update_local_roles_based_on_fields_after_transition,
                                  adapts=(ITestContainer, IAfterTransitionEvent))
         self.portal.invokeFactory('testingtype', 'test',
                                   stateLocalField=['Administrators'])
