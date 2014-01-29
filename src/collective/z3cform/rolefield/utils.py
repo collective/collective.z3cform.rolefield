@@ -24,10 +24,12 @@ def get_suffixed_principals(base_principal_names, suffix):
     portal = getSite()
     acl_users = getToolByName(portal, 'acl_users')
     principal_ids = acl_users.getUserIds() + acl_users.getGroupIds()
+    matchings = ["%s_%s" % (bpn, suffix) for bpn in base_principal_names]
+    ret = []
     for principal in principal_ids:
-        for base_principal_name in base_principal_names:
-            if base_principal_name in principal and suffix in principal:
-                yield principal
+        if principal in matchings:
+            ret.append(principal)
+    return ret
 
 
 def reset_local_role_on_object(context, roles_to_assign, old_value, new_value):
