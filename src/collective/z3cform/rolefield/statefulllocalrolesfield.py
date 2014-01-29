@@ -34,7 +34,7 @@ def update_local_roles_based_on_fields(context, event):
                 principals = list(get_suffixed_principals(field_value, old_suffix))
                 remove_local_roles_from_principals(context, principals, old_roles)
             for new_suffix, new_roles in new_suffixes_roles.items():
-                principals = list(get_suffixed_principals(field_value, old_suffix))
+                principals = list(get_suffixed_principals(field_value, new_suffix))
                 add_local_roles_to_principals(context, principals, new_roles)
 
 
