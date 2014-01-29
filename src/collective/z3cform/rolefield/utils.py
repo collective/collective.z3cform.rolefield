@@ -21,6 +21,9 @@ def get_field_from_schema(item, fieldInterface):
 
 
 def get_suffixed_principals(base_principal_names, suffix):
+    """
+        get principals matching each " base_principal_name _ suffix "
+    """
     portal = getSite()
     acl_users = getToolByName(portal, 'acl_users')
     principal_ids = acl_users.getUserIds() + acl_users.getGroupIds()
@@ -33,6 +36,9 @@ def get_suffixed_principals(base_principal_names, suffix):
 
 
 def reset_local_role_on_object(context, roles_to_assign, old_value, new_value):
+    """
+        reset local roles after principals change (old_value => new_value)
+    """
     if old_value is not schema.NO_VALUE and old_value is not None:
         remove_local_roles_from_principals(context,
                                            old_value,
@@ -41,6 +47,9 @@ def reset_local_role_on_object(context, roles_to_assign, old_value, new_value):
 
 
 def remove_local_roles_from_principals(context, principals, roles):
+    """
+        remove some local roles for a list of principals
+    """
     for local_principal, local_roles in dict(context.get_local_roles()).items():
         # a local_role is like (u'Contributor', u'Reviewer'))
         if local_principal in principals:
@@ -61,6 +70,9 @@ def remove_local_roles_from_principals(context, principals, roles):
 
 
 def add_local_roles_to_principals(context, principals, roles):
+    """
+        add some local roles for a list of principals
+    """
     portal = getSite()
     acl_users = getToolByName(portal, 'acl_users')
     principal_ids = acl_users.getUserIds() + acl_users.getGroupIds()
