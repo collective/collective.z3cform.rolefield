@@ -48,6 +48,7 @@ setup(
     ],
     extras_require={
         'test': [
+            'mock',
             'ecreall.helpers.testing',
             'plone.app.testing',
             'plone.app.dexterity',
