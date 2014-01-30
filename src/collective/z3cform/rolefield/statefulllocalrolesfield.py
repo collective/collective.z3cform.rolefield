@@ -43,6 +43,13 @@ def update_local_roles_based_on_fields_after_transition(context, event):
                 principals = list(get_suffixed_principals(field_value, new_suffix))
                 add_local_roles_to_principals(context, principals, new_roles)
 
+            old_principals = old_state_config.get('principals', {})
+            new_principals = new_state_config.get('principals', {})
+            for principals, roles in old_principals.items():
+                remove_local_roles_from_principals(context, principals, roles)
+            for principals, roles in new_principals.items():
+                add_local_roles_to_principals(context, principals, roles)
+
 
 def update_local_roles_based_on_fields_after_edit(context, field, event):
     """

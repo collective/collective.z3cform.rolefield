@@ -68,7 +68,8 @@ class TestStatefullLocalRolesToPrincipals(unittest.TestCase, BaseTest):
         item = getattr(self.portal, 'test')
         self.assertEqual(dict(item.get_local_roles()),
                          {'test_user_1_': ('Owner', ),
-                          'caveman_editor': ('Editor',)})
+                          'caveman_editor': ('Editor',),
+                          'dinosaur': ('Owner', )})
         workflow = getToolByName(self.portal, 'portal_workflow')
         item.stateLocalField = ['caveman']
         workflow.doActionFor(item, 'publish')
@@ -78,4 +79,5 @@ class TestStatefullLocalRolesToPrincipals(unittest.TestCase, BaseTest):
         workflow.doActionFor(item, 'retract')
         self.assertEqual(dict(item.get_local_roles()),
                          {'test_user_1_': ('Owner', ),
-                          'caveman_editor': ('Editor', )})
+                          'caveman_editor': ('Editor', ),
+                          'dinosaur': ('Owner', )})
