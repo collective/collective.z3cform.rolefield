@@ -58,7 +58,8 @@ def update_local_roles_based_on_fields_after_edit(context, field, event):
     old_value = event.old_value
     new_value = event.new_value
     current_state = get_state(context)
-    suffixes_roles = field.state_config.get(current_state, {})
+    field_state_config = field.state_config.get(current_state, {})
+    suffixes_roles = field_state_config.get('suffixes', {})
     if suffixes_roles:
         for (suffix, roles) in suffixes_roles.items():
             if old_value:
