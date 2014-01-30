@@ -2,6 +2,7 @@
 from plone.testing import z2, zca
 from plone.app.testing import PloneWithPackageLayer
 from plone.app.testing import FunctionalTesting
+from plone.app.testing import ploneSite
 import collective.z3cform.rolefield
 
 
@@ -19,5 +20,18 @@ ROLEFIELD = PloneWithPackageLayer(
     gs_profile_id='collective.z3cform.rolefield:testing',
     name="ROLEFIELD")
 
-ROLEFIELD_PROFILE_FUNCTIONAL = FunctionalTesting(
+
+class RoleFieldFunctionalTesting(FunctionalTesting):
+
+    def setUp(self):
+        super(RoleFieldFunctionalTesting, self).setUp()
+        with ploneSite() as portal:
+            groups_tool = portal.portal_groups
+            groups = ('groupname_suffix1', 'groupname_suffix2')
+            for group_id in groups:
+                if group_id not in groups_tool.getGroupIds():
+                    groups_tool.addGroup(group_id)
+
+
+ROLEFIELD_PROFILE_FUNCTIONAL = RoleFieldFunctionalTesting(
     bases=(ROLEFIELD, ), name="ROLEFIELD_PROFILE_FUNCTIONAL")

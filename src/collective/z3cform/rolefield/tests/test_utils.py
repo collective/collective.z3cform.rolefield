@@ -28,6 +28,6 @@ class TestGetFieldFromSchema(unittest.TestCase):
         self.assertTrue(isinstance(field, StatefullLocalRolesField))
 
     def test_get_suffixed_principals(self):
-        admins = list(get_suffixed_principals(['Site'], 'Administrators'))
-        self.assertEqual(len(admins), 1)
-        self.assertEqual(admins[0], 'Site Administrators')
+        groups = list(get_suffixed_principals(['groupname'], 'suffix1'))
+        self.assertEqual(len(groups), 1)
+        self.assertEqual(groups[0], 'groupname_suffix1')
