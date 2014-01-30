@@ -64,18 +64,18 @@ class TestStatefullLocalRolesToPrincipals(unittest.TestCase, BaseTest):
         component.provideHandler(update_local_roles_based_on_fields_after_transition,
                                  adapts=(ITestContainer, IAfterTransitionEvent))
         self.portal.invokeFactory('testingtype', 'test',
-                                  stateLocalField=['groupname'])
+                                  stateLocalField=['caveman'])
         item = getattr(self.portal, 'test')
         self.assertEqual(dict(item.get_local_roles()),
                          {'test_user_1_': ('Owner', ),
-                          'groupname_suffix1': ('Editor',)})
+                          'caveman_editor': ('Editor',)})
         workflow = getToolByName(self.portal, 'portal_workflow')
-        item.stateLocalField = ['groupname']
+        item.stateLocalField = ['caveman']
         workflow.doActionFor(item, 'publish')
         self.assertEqual(dict(item.get_local_roles()),
                          {'test_user_1_': ('Owner', ),
-                          'groupname_suffix2': ('Owner', )})
+                          'caveman_owner': ('Owner', )})
         workflow.doActionFor(item, 'retract')
         self.assertEqual(dict(item.get_local_roles()),
                          {'test_user_1_': ('Owner', ),
-                          'groupname_suffix1': ('Editor', )})
+                          'caveman_editor': ('Editor', )})

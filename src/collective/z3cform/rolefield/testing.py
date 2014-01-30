@@ -27,7 +27,7 @@ class RoleFieldFunctionalTesting(FunctionalTesting):
         super(RoleFieldFunctionalTesting, self).setUp()
         with ploneSite() as portal:
             groups_tool = portal.portal_groups
-            groups = ('groupname_suffix1', 'groupname_suffix2')
+            groups = ('caveman_editor', 'caveman_owner', 'dinosaur')
             for group_id in groups:
                 if group_id not in groups_tool.getGroupIds():
                     groups_tool.addGroup(group_id)

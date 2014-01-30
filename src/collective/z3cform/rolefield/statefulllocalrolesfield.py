@@ -30,10 +30,12 @@ def update_local_roles_based_on_fields_after_transition(context, event):
     new_state = event.new_state.getId()
     statefull_localroles_fields = get_field_from_schema(context, IStatefullLocalRolesField)
     for field in statefull_localroles_fields:
-        old_suffixes_roles = field.state_config.get(old_state, {})
-        new_suffixes_roles = field.state_config.get(new_state, {})
+        old_state_config = field.state_config.get(old_state, {})
+        new_state_config = field.state_config.get(new_state, {})
         field_value = getattr(context, field.__name__)
-        if field_value and new_suffixes_roles:
+        if field_value and new_state_config:
+            old_suffixes_roles = old_state_config.get('suffixes', {})
+            new_suffixes_roles = new_state_config.get('suffixes', {})
             for old_suffix, old_roles in old_suffixes_roles.items():
                 principals = list(get_suffixed_principals(field_value, old_suffix))
                 remove_local_roles_from_principals(context, principals, old_roles)

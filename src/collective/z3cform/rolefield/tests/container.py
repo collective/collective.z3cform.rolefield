@@ -9,8 +9,9 @@ from ..localrolefield import LocalRolesToPrincipals
 from ..statefulllocalrolesfield import StatefullLocalRolesField
 
 
-statefull_config = {u'private': {'suffix1': ('Editor', )},
-                    u'published': {'suffix2': ('Owner', )}}
+statefull_config = {u'private': {u'suffixes': {'editor': ('Editor', )},
+                                 u'principals': {('dinosaur', ): ('Owner', )}},
+                    u'published': {u'suffixes': {'owner': ('Owner', )}}}
 
 
 class ITestContainer(model.Schema):
