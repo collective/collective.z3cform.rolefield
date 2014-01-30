@@ -2,7 +2,7 @@
 from zope.interface import implementer
 from zope.schema import List
 from zope.schema.fieldproperty import FieldPropertyStoredThroughField
-from plone.api.content import get_state
+from plone import api
 
 import plone.supermodel.exportimport
 
@@ -55,9 +55,12 @@ def update_local_roles_based_on_fields_after_edit(context, field, event):
     """
         event handler to be used on field edit
     """
+    # Avoid to set roles during object creation
+    if len(context.creators) == 0:
+        return
     old_value = event.old_value
     new_value = event.new_value
-    current_state = get_state(context)
+    current_state = api.content.get_state(context)
     field_state_config = field.state_config.get(current_state, {})
     suffixes_roles = field_state_config.get('suffixes', {})
     if suffixes_roles:
