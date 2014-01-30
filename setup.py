@@ -43,7 +43,8 @@ setup(
     zip_safe=False,
     install_requires=[
         'setuptools',
-        'zope.schemaevent'
+        'zope.schemaevent',
+        'plone.api',
     ],
     extras_require={
         'test': [
