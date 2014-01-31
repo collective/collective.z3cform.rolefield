@@ -55,7 +55,7 @@ def update_local_roles_based_on_fields_after_edit(context, field, event):
     """
         event handler to be used on field edit
     """
-    # Avoid to set roles during object creation
+    # Avoid to set roles during object creation. Otherwise owner role isn't set
     if len(context.creators) == 0:
         return
     old_value = event.old_value
