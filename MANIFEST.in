@@ -1,3 +1,10 @@
-graft src
-graft docs
+graft src/
+graft docs/
 include *.cfg *.rst *.in
+include *.md
+include *.py
+include .travis.yml
+recursive-include docs *.GPL
+recursive-include docs *.rst
+recursive-include src *.xml
+recursive-include src *.zcml
