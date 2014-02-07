@@ -2,8 +2,11 @@ Changelog
 =========
 
 
-0.2 (unreleased)
+0.2 (2014-02-07)
 ----------------
+
+- Fix manifest
+  [jfroche]
 
 - Use zope.schema FieldEventUpdated event to apply local role changes
   [jfroche]
