@@ -44,7 +44,10 @@ setup(
     install_requires=[
         'setuptools',
         'zope.schemaevent',
+        'Products.CMFCore',
         'plone.api',
+        'plone.app.dexterity',
+        'collective.z3cform.datagridfield',
     ],
     extras_require={
         'test': [

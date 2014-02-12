@@ -1,0 +1,18 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:grok="http://namespaces.zope.org/grok"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    i18n_domain="collective.z3cform.rolefield">
+
+  <include package="Products.CMFCore" />
+
+  <grok:grok package=".settings" />
+
+  <browser:page
+      name="role-configuration"
+      for="plone.app.dexterity.interfaces.ITypeSchemaContext"
+      class=".settings.RoleConfigurationPage"
+      permission="plone.schemaeditor.ManageSchemata" />
+
+</configure>
