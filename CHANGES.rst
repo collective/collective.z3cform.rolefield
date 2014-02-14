@@ -2,17 +2,23 @@ Changelog
 =========
 
 
-0.3 (unreleased)
+0.3 (2014-02-14)
 ----------------
 
-- Nothing changed yet.
+- Some fixes
+  [sgeulette, mpeeters]
 
+- Updated tests
+  [mpeeters]
 
-0.2 (2014-02-07)
-----------------
+- Added field edit handler
+  [sgeulette]
 
-- Fix manifest
-  [jfroche]
+- Set more restrictive matching to find principal 
+  [sgeulette]
+
+- Changed the way to get the object schema  
+  [sgeulette]
 
 - Use zope.schema FieldEventUpdated event to apply local role changes
   [jfroche]
@@ -30,6 +36,13 @@ Changelog
   [jfroche]
 
 - Use buildout 2
+  [jfroche]
+
+
+0.2 (2014-02-07)
+----------------
+
+- Fix manifest
   [jfroche]
 
 
