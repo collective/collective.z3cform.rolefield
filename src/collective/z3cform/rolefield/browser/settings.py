@@ -104,8 +104,10 @@ class StateTerms(ChoiceTermsVocabulary, grok.MultiAdapter):
 def plone_role_generator(context):
     portal = api.portal.getSite()
     roles = []
+    filtered_roles = ['Anonymous', 'Authenticated', 'Manager', 'Member', 'Site Administrator']
     for role in portal.__ac_roles__:
-        roles.append((role, PMF(role)))
+        if role not in filtered_roles:
+            roles.append((role, PMF(role)))
 
     return list_2_vocabulary(roles)
 
