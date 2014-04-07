@@ -3,6 +3,12 @@
            tal:condition="view/status" tal:content="view/status">
 </div>
 
+<style media="screen" type="text/css">
+.template-role-configuration .datagridwidget-table-view td {
+    width: 25% !important;
+}
+</style>
+
 <form action="." method="post"
             tal:attributes="action request/getURL; enctype view/enctype">
 
