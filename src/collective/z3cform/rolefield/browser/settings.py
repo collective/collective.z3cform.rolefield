@@ -2,6 +2,7 @@
 from copy import deepcopy
 
 from zope import schema
+from zope.component import adapts
 from zope.browserpage.viewpagetemplatefile import ViewPageTemplateFile
 from zope.i18nmessageid import MessageFactory
 from zope.interface import Interface
@@ -21,8 +22,10 @@ from z3c.form.browser.checkbox import CheckBoxWidget
 from five import grok
 from plone import api
 from plone.app.dexterity.browser.layout import TypeFormLayout
+from plone.app.dexterity.interfaces import ITypeSchemaContext
 
 from collective.z3cform.datagridfield import DataGridFieldFactory, DictRow
+from Products.CMFPlone.utils import base_hasattr
 
 from .. import _
 from ..statefulllocalrolesfield import StatefullLocalRolesField
@@ -132,6 +135,33 @@ class IFieldRole(Interface):
                       required=True)
 
 
+class RoleFieldConfigurationAdapter(object):
+    adapts(ITypeSchemaContext)
+
+    def __init__(self, context):
+        self.__dict__['context'] = context
+        self.__dict__['fti'] = self.context.fti
+
+    def __getattr__(self, name):
+        if not base_hasattr(self.context.fti, name) or not isinstance(getattr(self.context.fti, name), dict):
+            raise AttributeError
+        rf_dict = getattr(self.context.fti, name)
+        new_list = []
+        for state in sorted(rf_dict.keys()):
+            for typ in sorted(rf_dict[state].keys()):
+                for value in sorted(rf_dict[state][typ].keys()):
+                    new_list.append({'state': state, 'type': typ, 'value': value, 'roles': rf_dict[state][typ][value]})
+        return new_list
+
+    def __setattr__(self, name, value):
+        if not value:
+            return
+        new_dict = {}
+        for row in value:
+            new_dict.update({row['state']: {row['type']: {row['value']: row['roles']}}})
+        setattr(self.context.fti, name, new_dict)
+
+
 class RoleFieldConfigurationForm(form.EditForm):
     template = ViewPageTemplateFile('role-config.pt')
     label = _(u'Role field configuration')
@@ -147,7 +177,7 @@ class RoleFieldConfigurationForm(form.EditForm):
         super(RoleFieldConfigurationForm, self).updateWidgets()
 
     def getContent(self):
-        return self.context.fti
+        return RoleFieldConfigurationAdapter(self.context)
 
     @property
     def fields(self):
