@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 from zope.component.hooks import getSite
 from zope.component import getUtility
+from zope.component.interfaces import ComponentLookupError
 from zope import schema
 
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import base_hasattr
 from plone.dexterity.interfaces import IDexterityFTI
 
 from . import logger
+from .interfaces import IStatefullLocalRolesField
 
 
 def get_field_from_schema(item, fieldInterface):
@@ -80,3 +83,22 @@ def add_local_roles_to_principals(context, principals, roles):
         if not added_principal in principal_ids:
             continue
         context.manage_addLocalRoles(added_principal, roles)
+
+
+def add_fti_configuration(portal_type, field_name, configuration, force=False):
+    """
+        Add in fti a specific StatefullLocalRolesField configuration
+    """
+    try:
+        fti = getUtility(IDexterityFTI, name=portal_type)
+    except ComponentLookupError:
+        return "The portal type '%s' doesn't exist" % portal_type
+    fields = dict([tup for tup in schema.getFieldsInOrder(fti.lookupSchema())
+                   if tup[0] == field_name])
+    if field_name not in fields:
+        return "The given field name '%s' isn't found in the '%s' schema" % (field_name, portal_type)
+    if not IStatefullLocalRolesField.providedBy(fields[field_name]):
+        return "The given field name '%s' isn't an IStatefullLocalRolesField field" % (field_name)
+    if base_hasattr(fti, field_name) and not force:
+        return "The configuration of field '%s' on type '%s' is already set" % (field_name, portal_type)
+    setattr(fti, field_name, configuration)
