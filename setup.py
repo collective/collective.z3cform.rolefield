@@ -45,6 +45,7 @@ setup(
         'setuptools',
         'zope.schemaevent',
         'Products.CMFCore',
+        'five.grok',
         'plone.api',
         'plone.app.dexterity',
         'collective.z3cform.datagridfield',
