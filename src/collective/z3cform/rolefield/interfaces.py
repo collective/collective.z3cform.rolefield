@@ -19,7 +19,10 @@ class ILocalRolesToPrincipals(IList):
 
 
 class IStatefullLocalRolesField(IList):
+    """
+    """
 
-    state_config = StateMapping(title=u"Local role configuration per state",
-                                key_type=TextLine(),
-                                required=True)
+# The config is now stored on the fti
+#    state_config = StateMapping(title=u"Local role configuration per state",
+#                                key_type=TextLine(),
+#                                required=True)

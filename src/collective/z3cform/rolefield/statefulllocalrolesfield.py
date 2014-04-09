@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
+from zope.component import getUtility
 from zope.interface import implementer
 from zope.schema import List
 from zope.schema.fieldproperty import FieldPropertyStoredThroughField
 from plone import api
-
+from plone.dexterity.interfaces import IDexterityFTI
 import plone.supermodel.exportimport
+from Products.CMFPlone.utils import base_hasattr
 
 from .interfaces import IStatefullLocalRolesField
 from .utils import (get_field_from_schema, remove_local_roles_from_principals,
@@ -14,12 +16,13 @@ from .utils import (get_field_from_schema, remove_local_roles_from_principals,
 
 @implementer(IStatefullLocalRolesField)
 class StatefullLocalRolesField(List):
-
-    state_config = FieldPropertyStoredThroughField(IStatefullLocalRolesField['state_config'])
-
-    def __init__(self, state_config, **kw):
-        self.state_config = state_config
-        super(StatefullLocalRolesField, self).__init__(**kw)
+    """
+    """
+# The config is now stored on the fti
+#    state_config = FieldPropertyStoredThroughField(IStatefullLocalRolesField['state_config'])
+#    def __init__(self, **kw):
+#        self.state_config = state_config
+#        super(StatefullLocalRolesField, self).__init__(**kw)
 
 
 def update_local_roles_based_on_fields_after_transition(context, event):
@@ -28,10 +31,14 @@ def update_local_roles_based_on_fields_after_transition(context, event):
     """
     old_state = event.old_state.getId()
     new_state = event.new_state.getId()
+    fti = getUtility(IDexterityFTI, name=context.portal_type)
     statefull_localroles_fields = get_field_from_schema(context, IStatefullLocalRolesField)
     for field in statefull_localroles_fields:
-        old_state_config = field.state_config.get(old_state, {})
-        new_state_config = field.state_config.get(new_state, {})
+        if not base_hasattr(fti, field.__name__):
+            continue
+        state_config = getattr(fti, field.__name__)
+        old_state_config = state_config.get(old_state, {})
+        new_state_config = state_config.get(new_state, {})
         field_value = getattr(context, field.__name__)
         if field_value:
             old_suffixes_roles = old_state_config.get('suffixes', {})
@@ -58,10 +65,14 @@ def update_local_roles_based_on_fields_after_edit(context, field, event):
     # Avoid to set roles during object creation. Otherwise owner role isn't set
     if len(context.creators) == 0:
         return
+    fti = getUtility(IDexterityFTI, name=context.portal_type)
+    if not base_hasattr(fti, field.__name__):
+        return
+    state_config = getattr(fti, field.__name__)
+    current_state = api.content.get_state(context)
     old_value = event.old_value
     new_value = event.new_value
-    current_state = api.content.get_state(context)
-    field_state_config = field.state_config.get(current_state, {})
+    field_state_config = state_config.get(current_state, {})
     suffixes_roles = field_state_config.get('suffixes', {})
     if suffixes_roles:
         for (suffix, roles) in suffixes_roles.items():
