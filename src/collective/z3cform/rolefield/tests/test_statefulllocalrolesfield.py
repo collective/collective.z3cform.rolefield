@@ -17,6 +17,11 @@ from ..statefulllocalrolesfield import (StatefullLocalRolesField,
 from ..interfaces import IStatefullLocalRolesField
 from ..testing import ROLEFIELD_PROFILE_FUNCTIONAL
 from .container import ITestContainer
+from ..utils import add_fti_configuration
+
+statefull_config = {u'private': {u'suffixes': {'editor': ('Editor', )},
+                                 u'principals': {('dinosaur', ): ('Owner', )}},
+                    u'published': {u'suffixes': {'owner': ('Owner', )}}}
 
 
 class TestStatefullLocalRolesToPrincipals(unittest.TestCase, BaseTest):
@@ -35,6 +40,7 @@ class TestStatefullLocalRolesToPrincipals(unittest.TestCase, BaseTest):
                                  adapts=(ITestContainer,
                                          IStatefullLocalRolesField,
                                          schema.interfaces.IFieldUpdatedEvent))
+        add_fti_configuration('testingtype', 'stateLocalField', statefull_config)
 
     def _getTargetClass(self):
         return StatefullLocalRolesField
@@ -46,7 +52,7 @@ class TestStatefullLocalRolesToPrincipals(unittest.TestCase, BaseTest):
 
     def test_localroles_to_assign(self):
         self.assertRaises(ValueError, self._makeOne, {})
-        field = self._makeOne({u'private': {'groups': {'suffix1': 'Reader'}}})
+        field = self._makeOne()
         field.validate([])
 
     def test_statefull_event_on_testingtype(self):

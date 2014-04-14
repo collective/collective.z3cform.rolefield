@@ -9,11 +9,6 @@ from ..localrolefield import LocalRolesToPrincipals
 from ..statefulllocalrolesfield import StatefullLocalRolesField
 
 
-statefull_config = {u'private': {u'suffixes': {'editor': ('Editor', )},
-                                 u'principals': {('dinosaur', ): ('Owner', )}},
-                    u'published': {u'suffixes': {'owner': ('Owner', )}}}
-
-
 class ITestContainer(model.Schema):
 
     testingField = LocalRolesToPrincipals(title=u'testingField',
@@ -21,8 +16,7 @@ class ITestContainer(model.Schema):
                                           roles_to_assign=('Reader', 'Owner'))
 
     stateLocalField = StatefullLocalRolesField(title=u'stateLocalField',
-                                               required=False,
-                                               state_config=statefull_config)
+                                               required=False,)
 
 
 class TestContainer(Container):
