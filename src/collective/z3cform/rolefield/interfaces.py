@@ -20,6 +20,7 @@ class ILocalRolesToPrincipals(IList):
 
 class IStatefullLocalRolesField(IList):
     """
+        Stateful local roles field interface
     """
 
 # The config is now stored on the fti
