@@ -26,16 +26,11 @@ def get_field_from_schema(item, fieldInterface):
 def get_suffixed_principals(base_principal_names, suffix):
     """
         get principals matching each " base_principal_name _ suffix "
+        in case suffix is empty, return principals
     """
-    portal = getSite()
-    acl_users = getToolByName(portal, 'acl_users')
-    principal_ids = acl_users.getUserIds() + acl_users.getGroupIds()
-    matchings = ["%s_%s" % (bpn, suffix) for bpn in base_principal_names]
-    ret = []
-    for principal in principal_ids:
-        if principal in matchings:
-            ret.append(principal)
-    return ret
+    if not suffix:
+        return base_principal_names
+    return ["%s_%s" % (bpn, suffix) for bpn in base_principal_names]
 
 
 def reset_local_role_on_object(context, roles_to_assign, old_value, new_value):

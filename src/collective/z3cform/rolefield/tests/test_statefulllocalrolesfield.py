@@ -160,6 +160,8 @@ class TestStatefullLocalRolesToPrincipals(unittest.TestCase, BaseTest):
                          {'test_user_1_': ('Owner', ),
                           'dinosaur': ('Owner', ), 't-rex_editor': ('Editor',)})
         item.stateLocalField = []
+        # t-rex_editor from stateLocalField is removed.
+        # it's yet present because set by stateLocalField principal.
         self.assertEqual(dict(item.get_local_roles()),
                          {'test_user_1_': ('Owner', ),
                           'dinosaur': ('Owner', ), 't-rex_editor': ('Editor',)})
@@ -172,7 +174,23 @@ class TestStatefullLocalRolesToPrincipals(unittest.TestCase, BaseTest):
                           'caveman_editor': ('Editor',),
                           'dinosaur': ('Owner', ), 't-rex_editor': ('Editor',)})
         item.stateLocalField = []
+        # caveman_editor from stateLocalField is removed.
+        # it's yet present because set by stateLocalField2.
         self.assertEqual(dict(item.get_local_roles()),
                          {'test_user_1_': ('Owner', ),
                           'caveman_editor': ('Editor',),
                           'dinosaur': ('Owner', ), 't-rex_editor': ('Editor',)})
+
+    def test_localroles_without_suffix(self):
+        new_config = {u'private': {u'suffixes': {'': ('Editor', )}}}
+        add_fti_configuration('testingtype', 'stateLocalField', new_config, force=True)
+        # a non existing group is not set
+        self.portal.invokeFactory('testingtype', 'test', stateLocalField=['caveman'])
+        item = getattr(self.portal, 'test')
+        self.assertEqual(dict(item.get_local_roles()),
+                         {'test_user_1_': ('Owner', )})
+        # an existing group is set
+        item.stateLocalField = ['dinosaur']
+        self.assertEqual(dict(item.get_local_roles()),
+                         {'test_user_1_': ('Owner', ),
+                          'dinosaur': ('Editor', )})

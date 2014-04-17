@@ -32,6 +32,9 @@ class TestGetFieldFromSchema(unittest.TestCase):
         groups = list(get_suffixed_principals(['caveman'], 'editor'))
         self.assertEqual(len(groups), 1)
         self.assertEqual(groups[0], 'caveman_editor')
+        groups = list(get_suffixed_principals(['caveman'], ''))
+        self.assertEqual(len(groups), 1)
+        self.assertEqual(groups[0], 'caveman')
 
     def test_add_fti_configuration(self):
         add_fti_configuration('testingtype', 'stateLocalField', stateful_config)
