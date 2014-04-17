@@ -19,8 +19,10 @@ from ..testing import ROLEFIELD_PROFILE_FUNCTIONAL
 from .container import ITestContainer
 from ..utils import add_fti_configuration
 
-statefull_config = {u'private': {u'suffixes': {'editor': ('Editor', )},
-                                 u'principals': {('dinosaur', ): ('Owner', )}},
+stateful_config = {u'private': {u'suffixes': {'editor': ('Editor', )},
+                                u'principals': {('dinosaur', ): ('Owner', ), ('t-rex_editor', ): ('Editor', )}},
+                   u'published': {u'suffixes': {'owner': ('Owner', )}}}
+stateful_config2 = {u'private': {u'suffixes': {'editor': ('Editor', )}},
                     u'published': {u'suffixes': {'owner': ('Owner', )}}}
 
 
@@ -40,7 +42,8 @@ class TestStatefullLocalRolesToPrincipals(unittest.TestCase, BaseTest):
                                  adapts=(ITestContainer,
                                          IStatefullLocalRolesField,
                                          schema.interfaces.IFieldUpdatedEvent))
-        add_fti_configuration('testingtype', 'stateLocalField', statefull_config)
+        add_fti_configuration('testingtype', 'stateLocalField', stateful_config)
+        add_fti_configuration('testingtype', 'stateLocalField2', stateful_config2)
 
     def _getTargetClass(self):
         return StatefullLocalRolesField
@@ -83,7 +86,7 @@ class TestStatefullLocalRolesToPrincipals(unittest.TestCase, BaseTest):
         self.assertEqual(dict(item.get_local_roles()),
                          {'test_user_1_': ('Owner', ),
                           'caveman_editor': ('Editor',),
-                          'dinosaur': ('Owner', )})
+                          'dinosaur': ('Owner', ), 't-rex_editor': ('Editor',)})
 
         workflow = getToolByName(self.portal, 'portal_workflow')
         workflow.doActionFor(item, 'publish')
@@ -95,13 +98,13 @@ class TestStatefullLocalRolesToPrincipals(unittest.TestCase, BaseTest):
         self.assertEqual(dict(item.get_local_roles()),
                          {'test_user_1_': ('Owner', ),
                           'caveman_editor': ('Editor', ),
-                          'dinosaur': ('Owner', )})
+                          'dinosaur': ('Owner', ), 't-rex_editor': ('Editor',)})
 
     def test_localroles_change_on_statechange_without_values(self):
         self.portal.invokeFactory('testingtype', 'test', stateLocalField=[])
         item = getattr(self.portal, 'test')
         self.assertEqual(dict(item.get_local_roles()),
-                         {'test_user_1_': ('Owner', ),
+                         {'test_user_1_': ('Owner', ), 't-rex_editor': ('Editor',),
                           'dinosaur': ('Owner', )})
 
         workflow = getToolByName(self.portal, 'portal_workflow')
@@ -112,7 +115,29 @@ class TestStatefullLocalRolesToPrincipals(unittest.TestCase, BaseTest):
         workflow.doActionFor(item, 'retract')
         self.assertEqual(dict(item.get_local_roles()),
                          {'test_user_1_': ('Owner', ),
-                          'dinosaur': ('Owner', )})
+                          'dinosaur': ('Owner', ), 't-rex_editor': ('Editor',)})
+
+    def test_localroles_change_on_statechange_other_field(self):
+        self.portal.invokeFactory('testingtype', 'test',
+                                  stateLocalField=['caveman'], stateLocalField2=['t-rex'])
+        item = getattr(self.portal, 'test')
+        self.assertEqual(dict(item.get_local_roles()),
+                         {'test_user_1_': ('Owner', ),
+                          'caveman_editor': ('Editor',),
+                          'dinosaur': ('Owner', ), 't-rex_editor': ('Editor',)})
+
+        workflow = getToolByName(self.portal, 'portal_workflow')
+        workflow.doActionFor(item, 'publish')
+        self.assertEqual(dict(item.get_local_roles()),
+                         {'test_user_1_': ('Owner', ),
+                          'caveman_owner': ('Owner', ),
+                          't-rex_owner': ('Owner', )})
+
+        workflow.doActionFor(item, 'retract')
+        self.assertEqual(dict(item.get_local_roles()),
+                         {'test_user_1_': ('Owner', ),
+                          'caveman_editor': ('Editor', ),
+                          'dinosaur': ('Owner', ), 't-rex_editor': ('Editor',)})
 
     def test_localroles_change_after_edit(self):
         self.portal.invokeFactory('testingtype', 'test',
@@ -121,9 +146,33 @@ class TestStatefullLocalRolesToPrincipals(unittest.TestCase, BaseTest):
 
         self.assertEqual(dict(item.get_local_roles()),
                          {'test_user_1_': ('Owner', ),
-                          'dinosaur': ('Owner', )})
+                          'dinosaur': ('Owner', ), 't-rex_editor': ('Editor',)})
         item.stateLocalField = ['caveman']
         self.assertEqual(dict(item.get_local_roles()),
                          {'test_user_1_': ('Owner', ),
-                          'dinosaur': ('Owner', ),
+                          'dinosaur': ('Owner', ), 't-rex_editor': ('Editor',),
                           'caveman_editor': ('Editor',)})
+
+    def test_localroles_change_after_edit_same_principal(self):
+        self.portal.invokeFactory('testingtype', 'test', stateLocalField=['t-rex'])
+        item = getattr(self.portal, 'test')
+        self.assertEqual(dict(item.get_local_roles()),
+                         {'test_user_1_': ('Owner', ),
+                          'dinosaur': ('Owner', ), 't-rex_editor': ('Editor',)})
+        item.stateLocalField = []
+        self.assertEqual(dict(item.get_local_roles()),
+                         {'test_user_1_': ('Owner', ),
+                          'dinosaur': ('Owner', ), 't-rex_editor': ('Editor',)})
+
+    def test_localroles_change_after_edit_other_field(self):
+        self.portal.invokeFactory('testingtype', 'test', stateLocalField=['caveman'], stateLocalField2=['caveman'])
+        item = getattr(self.portal, 'test')
+        self.assertEqual(dict(item.get_local_roles()),
+                         {'test_user_1_': ('Owner', ),
+                          'caveman_editor': ('Editor',),
+                          'dinosaur': ('Owner', ), 't-rex_editor': ('Editor',)})
+        item.stateLocalField = []
+        self.assertEqual(dict(item.get_local_roles()),
+                         {'test_user_1_': ('Owner', ),
+                          'caveman_editor': ('Editor',),
+                          'dinosaur': ('Owner', ), 't-rex_editor': ('Editor',)})

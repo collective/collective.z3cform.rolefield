@@ -7,7 +7,7 @@ from ..statefulllocalrolesfield import StatefullLocalRolesField
 from ..interfaces import IStatefullLocalRolesField
 from ..testing import ROLEFIELD_PROFILE_FUNCTIONAL
 from ..utils import get_field_from_schema, get_suffixed_principals, add_fti_configuration
-from test_statefulllocalrolesfield import statefull_config
+from test_statefulllocalrolesfield import stateful_config
 
 
 class TestGetFieldFromSchema(unittest.TestCase):
@@ -24,9 +24,9 @@ class TestGetFieldFromSchema(unittest.TestCase):
         self.portal.invokeFactory('testingtype', 'test')
         item = getattr(self.portal, 'test')
         fields = list(get_field_from_schema(item, IStatefullLocalRolesField))
-        self.assertEqual(len(fields), 1)
-        field = fields[0]
-        self.assertTrue(isinstance(field, StatefullLocalRolesField))
+        self.assertEqual(len(fields), 2)
+        for field in fields:
+            self.assertTrue(isinstance(field, StatefullLocalRolesField))
 
     def test_get_suffixed_principals(self):
         groups = list(get_suffixed_principals(['caveman'], 'editor'))
@@ -34,5 +34,5 @@ class TestGetFieldFromSchema(unittest.TestCase):
         self.assertEqual(groups[0], 'caveman_editor')
 
     def test_add_fti_configuration(self):
-        add_fti_configuration('testingtype', 'stateLocalField', statefull_config)
-        self.assertEqual(self.portal.portal_types.testingtype.stateLocalField, statefull_config)
+        add_fti_configuration('testingtype', 'stateLocalField', stateful_config)
+        self.assertEqual(self.portal.portal_types.testingtype.stateLocalField, stateful_config)

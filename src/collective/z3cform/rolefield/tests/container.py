@@ -18,10 +18,15 @@ class ITestContainer(model.Schema):
     stateLocalField = StatefullLocalRolesField(title=u'stateLocalField',
                                                required=False,)
 
+    stateLocalField2 = StatefullLocalRolesField(title=u'stateLocalField2',
+                                                required=False,)
+
 
 class TestContainer(Container):
     interface.implements(ITestContainer)
 
     stateLocalField = FieldProperty(ITestContainer[u'stateLocalField'])
+
+    stateLocalField2 = FieldProperty(ITestContainer[u'stateLocalField2'])
 
     testingField = FieldProperty(ITestContainer[u'testingField'])
