@@ -23,12 +23,12 @@ from five import grok
 from plone import api
 from plone.app.dexterity.browser.layout import TypeFormLayout
 from plone.app.dexterity.interfaces import ITypeSchemaContext
-
 from collective.z3cform.datagridfield import DataGridFieldFactory, DictRow
 from Products.CMFPlone.utils import base_hasattr
 
 from .. import _
 from ..statefulllocalrolesfield import StatefullLocalRolesField
+from ..utils import update_portaltype_local_roles
 
 PMF = MessageFactory('plone')
 
@@ -111,8 +111,7 @@ def plone_role_generator(context):
     for role in portal.__ac_roles__:
         if role not in filtered_roles:
             roles.append((role, PMF(role)))
-
-    return list_2_vocabulary(roles)
+    return list_2_vocabulary(sorted(roles))
 
 
 @grok.provider(IContextSourceBinder)
@@ -150,16 +149,24 @@ class RoleFieldConfigurationAdapter(object):
         for state in sorted(rf_dict.keys()):
             for typ in sorted(rf_dict[state].keys()):
                 for value in sorted(rf_dict[state][typ].keys()):
-                    new_list.append({'state': state, 'type': typ, 'value': value, 'roles': rf_dict[state][typ][value]})
+                    new_list.append({'state': state, 'type': typ.decode('utf8'), 'value': value.decode('utf8'),
+                                     'roles': rf_dict[state][typ][value]})
         return new_list
 
     def __setattr__(self, name, value):
-        if not value:
-            return
+        oldValue = getattr(self.context.fti, name, {})
         new_dict = {}
         for row in value:
-            new_dict.update({row['state']: {row['type']: {row['value']: row['roles']}}})
+            typ = row['type'].encode('utf8')
+            if row['state'] not in new_dict:
+                new_dict[row['state']] = {}
+            if typ not in new_dict[row['state']]:
+                new_dict[row['state']][typ] = {}
+            new_dict[row['state']][typ][row['value'].encode('utf8')] = row['roles']
+        if oldValue == new_dict:
+            return
         setattr(self.context.fti, name, new_dict)
+        update_portaltype_local_roles(self.context.fti.portal_type, oldValue, new_dict)
 
 
 class RoleFieldConfigurationForm(form.EditForm):
