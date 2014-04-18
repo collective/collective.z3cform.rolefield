@@ -29,6 +29,7 @@ from Products.CMFPlone.utils import base_hasattr
 from .. import _
 from ..statefulllocalrolesfield import StatefullLocalRolesField
 from ..utils import update_portaltype_local_roles
+from .. import logger
 
 PMF = MessageFactory('plone')
 
@@ -210,3 +211,14 @@ class RoleFieldConfigurationForm(form.EditForm):
 class RoleConfigurationPage(TypeFormLayout):
     form = RoleFieldConfigurationForm
     label = _(u'Role field configuration')
+
+
+def roleFieldConfigurationModified(object, event):
+    """
+        Subscriber to update objects security after a localrole config change
+    """
+    portal = api.portal.getSite()
+    logger.info('Objects security update')
+    for brain in portal.portal_catalog(portal_type=event.object.fti.__name__):
+        obj = brain.getObject()
+        obj.reindexObjectSecurity()

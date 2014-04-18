@@ -128,6 +128,7 @@ def update_portaltype_local_roles(portal_type, old_config, new_config):
         add local roles of all fields new configuration.
     """
     portal = api.portal.getSite()
+    logger.info('Objects local roles update')
     for brain in portal.portal_catalog(portal_type=portal_type):
         obj = brain.getObject()
         current_state = api.content.get_state(obj)

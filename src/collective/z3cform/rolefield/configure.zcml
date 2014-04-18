@@ -25,4 +25,10 @@
          zope.schema.interfaces.IFieldUpdatedEvent"
     handler=".localrolefield.set_local_role_on_object" />
 
+    <subscriber
+        for=".browser.settings.RoleFieldConfigurationAdapter
+             zope.lifecycleevent.IObjectModifiedEvent"
+        handler=".browser.settings.roleFieldConfigurationModified"
+        />
+
 </configure>
