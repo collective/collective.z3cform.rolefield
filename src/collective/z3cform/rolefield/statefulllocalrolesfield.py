@@ -11,7 +11,8 @@ from Products.CMFPlone.utils import base_hasattr
 from .interfaces import IStatefullLocalRolesField
 from .utils import (get_field_from_schema, remove_local_roles_from_principals,
                     add_local_roles_to_principals,
-                    get_suffixed_principals)
+                    get_suffixed_principals, replace_state_local_roles
+                    )
 
 
 @implementer(IStatefullLocalRolesField)
@@ -40,22 +41,7 @@ def update_local_roles_based_on_fields_after_transition(context, event):
         old_state_config = field_config.get(old_state, {})
         new_state_config = field_config.get(new_state, {})
         field_value = getattr(context, field.__name__)
-        if field_value:
-            old_suffixes_roles = old_state_config.get('suffixes', {})
-            new_suffixes_roles = new_state_config.get('suffixes', {})
-            for old_suffix, old_roles in old_suffixes_roles.items():
-                s_principals = list(get_suffixed_principals(field_value, old_suffix))
-                remove_local_roles_from_principals(context, s_principals, old_roles)
-            for new_suffix, new_roles in new_suffixes_roles.items():
-                s_principals = list(get_suffixed_principals(field_value, new_suffix))
-                add_local_roles_to_principals(context, s_principals, new_roles)
-
-        old_principals = old_state_config.get('principals', {})
-        new_principals = new_state_config.get('principals', {})
-        for principals, roles in old_principals.items():
-            remove_local_roles_from_principals(context, principals, roles)
-        for principals, roles in new_principals.items():
-            add_local_roles_to_principals(context, principals, roles)
+        replace_state_local_roles(context, field_value, old_state_config, new_state_config)
 
 
 def update_local_roles_based_on_fields_after_edit(context, field, event):

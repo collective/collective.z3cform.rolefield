@@ -6,6 +6,7 @@ from zope import schema
 
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import base_hasattr
+from plone import api
 from plone.dexterity.interfaces import IDexterityFTI
 
 from . import logger
@@ -97,3 +98,42 @@ def add_fti_configuration(portal_type, field_name, configuration, force=False):
     if base_hasattr(fti, field_name) and not force:
         return "The configuration of field '%s' on type '%s' is already set" % (field_name, portal_type)
     setattr(fti, field_name, configuration)
+
+
+def replace_state_local_roles(context, field_value, old_state_config, new_state_config):
+    """
+    """
+    if field_value:
+        old_suffixes_roles = old_state_config.get('suffixes', {})
+        new_suffixes_roles = new_state_config.get('suffixes', {})
+        for old_suffix, old_roles in old_suffixes_roles.items():
+            s_principals = list(get_suffixed_principals(field_value, old_suffix))
+            remove_local_roles_from_principals(context, s_principals, old_roles)
+        for new_suffix, new_roles in new_suffixes_roles.items():
+            s_principals = list(get_suffixed_principals(field_value, new_suffix))
+            add_local_roles_to_principals(context, s_principals, new_roles)
+
+    old_principals = old_state_config.get('principals', {})
+    new_principals = new_state_config.get('principals', {})
+    for principals, roles in old_principals.items():
+        remove_local_roles_from_principals(context, principals, roles)
+    for principals, roles in new_principals.items():
+        add_local_roles_to_principals(context, principals, roles)
+
+
+def update_portaltype_local_roles(portal_type, old_config, new_config):
+    """
+        update portaltype objects after config modification.
+        remove local roles of all fields old configuration.
+        add local roles of all fields new configuration.
+    """
+    portal = api.portal.getSite()
+    for brain in portal.portal_catalog(portal_type=portal_type):
+        obj = brain.getObject()
+        current_state = api.content.get_state(obj)
+        old_state_config = old_config.get(current_state, {})
+        new_state_config = new_config.get(current_state, {})
+        statefull_localroles_fields = get_field_from_schema(obj, IStatefullLocalRolesField)
+        for field in statefull_localroles_fields:
+            field_value = getattr(obj, field.__name__)
+            replace_state_local_roles(obj, field_value, old_state_config, new_state_config)
