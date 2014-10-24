@@ -3,6 +3,10 @@
 Introduction
 ============
 
+.. warning::
+**collective.z3cform.rolefield** is deprecated.
+Please, use dexterity.localrolesfield instead.
+
 A z3cform field that manage local roles.  This give the ability to assign local roles to selected element (that are by default Plone groups)
 
 How-to
