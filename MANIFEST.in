@@ -1,5 +1,5 @@
-graft src/
-graft docs/
+graft src
+graft docs
 include *.cfg *.rst *.in
 include *.md
 include *.py

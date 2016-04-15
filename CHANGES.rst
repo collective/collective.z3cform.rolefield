@@ -5,8 +5,8 @@ Changelog
 0.4 (unreleased)
 ----------------
 
-- Nothing changed yet.
-
+- Added deprecation warning.
+  [sgeulette]
 
 0.3 (2014-02-14)
 ----------------
